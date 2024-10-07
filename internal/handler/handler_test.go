@@ -77,7 +77,9 @@ func Test_ValidateCardHandler(t *testing.T) {
 			handler.ServeHTTP(recorder, req)
 			response := domen.Response{}
 			err = json.NewDecoder(recorder.Result().Body).Decode(&response)
-
+			if err != nil {
+				t.Errorf("Unable to decode response: %s", err.Error())
+			}
 			switch response.Error == nil {
 			case true:
 				if testCase.expectedError != "" {

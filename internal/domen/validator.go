@@ -76,8 +76,8 @@ func InitCardValidator(initData string) (*CardValidator, error) {
 
 // the json data check function about the permissible PAN lengths for different issuers of bank cards
 func validateSegments(issuersMap *map[int][]CardIssuer) error {
-	mismatchedType := errors.New("mismatched type, unable convert to integer")
-	formatError := errors.New("wrong data format for segments")
+	mtErrText := "mismatched type, unable convert to integer"
+	dfErrText := "wrong data format for segments"
 
 	for _, cardIssuers := range *issuersMap {
 		for _, issuer := range cardIssuers {
@@ -86,20 +86,19 @@ func validateSegments(issuersMap *map[int][]CardIssuer) error {
 				if strings.Contains(segment, "-") {
 					parts := strings.Split(segment, "-")
 					if len(parts) != 2 {
-						return errors.New(fmt.Sprintf("%v\nin range: %s\nIssuer: %s", formatError.Error(), segment, issuer))
+						return fmt.Errorf("%s\nin range: %s\nIssuer: %s", mtErrText, segment, issuer)
 					} else {
 						start, startErr := strconv.Atoi(parts[0])
 						end, endErr := strconv.Atoi(parts[1])
 						//check that used correct data types and values
 						if startErr != nil || endErr != nil || end <= start {
-							return errors.New(fmt.Sprintf("%v\nin range: %s\nmin val: %v\nmax val: %v\nIssuer: %s",
-								formatError.Error(), segment, start, end, issuer))
+							return fmt.Errorf("%v\nin range: %s\nmin val: %v\nmax val: %v\nIssuer: %s",
+								dfErrText, segment, start, end, issuer)
 						}
 					}
 				} else {
 					if _, err := strconv.Atoi(segment); err != nil {
-						return errors.New(fmt.Sprintf("%v\nvalue: %s\nIssuer: %s", mismatchedType.Error(), segment, issuer))
-
+						return fmt.Errorf("%v\nvalue: %s\nIssuer: %s", mtErrText, segment, issuer)
 					}
 				}
 			}
