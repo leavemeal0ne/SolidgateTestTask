@@ -1,0 +1,13 @@
+version: '3.9'
+services:
+  validate_app:
+    container_name: validate_app
+    build:
+      dockerfile: Dockerfile
+      context: .
+    environment:
+      validatorDataLocation: "/card_classification_data/CardData.json"
+      serverPort: "8080"
+    ports:
+      - "8080:8080"
+    restart: on-failure
